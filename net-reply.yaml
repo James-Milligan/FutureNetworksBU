@@ -6,10 +6,10 @@ spec:
   ports:
     - name: http
       port: 8081
-      targetPort: 8081
+      targetPort: http
     - name: grpc
       port: 8080
-      targetPort: 8080
+      targetPort: grpc
   selector:
     app: net-reply
   type: LoadBalancer
@@ -34,10 +34,8 @@ spec:
         - name: net-reply-grpc-container
           image: jamesmilligan/net-reply-grpc
           ports:
-            - containerPort: 8080
-          env:
-            - name: GRPC_SERVER_PORT
-              value: "8080"
+            - name: grpc
+              containerPort: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -59,11 +57,8 @@ spec:
         - name: net-reply-rest-container
           image: jamesmilligan/net-reply-rest
           ports:
-            - containerPort: 8081
+            - name: http
+              containerPort: 8081
           env:
-            - name: GRPC_SERVER_PORT
-              value: "8080"
             - name: GRPC_NETWORK_ADDRESS
               value: "net-reply-service"
-            - name: REST_SERVER_PORT
-              value: "8081"
